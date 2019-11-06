@@ -27,7 +27,8 @@ def guide(update, context):
         <b>/run</b> - runs your code\n
         <b>/clear</b> - clears your code\n
         <b>/view</b> - shows your current code\n
-        <b>/help</b> - displays the available commands""", parse_mode=ParseMode.HTML)
+        <b>/help</b> - displays the available commands\n
+    Have ideas and suggestions for this mini project? Head over to the <a href="https://github.com/tjtanjin/telesourcebot">Project Repository</a>!""", parse_mode=ParseMode.HTML)
     return None
 
 def check_exist_user(userid):
