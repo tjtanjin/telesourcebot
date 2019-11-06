@@ -36,7 +36,7 @@ def create_user(update, context):
         update.message.reply_text("You are already registered!")
     else:
         new_info = {"username":update.message.from_user.username, "userid":str(update.message.chat_id), "mode":"1", "user_group":"normal", "code_snippet":""}
-        with open("./userinfo/" + str(update.message.chat_id) + ".json", 'w+') as info_file:
+        with open("../userinfo/" + str(update.message.chat_id) + ".json", 'w+') as info_file:
             json.dump(new_info, info_file)
         update.message.reply_text("Registration successfully completed. <b>/code</b> to start coding!", parse_mode=ParseMode.HTML)
     return None
