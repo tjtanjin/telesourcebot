@@ -153,7 +153,10 @@ def load_animation(user, update, message):
         update: default telegram arg
         context: default telegram arg
     """
-    lg.logbook(user, "run_code")
+    try:
+        lg.logbook(user, "run_code")
+    except Exception as ex:
+        print(ex)
     while executing_code:
         message.edit_text(text="<b>Executing Code /</b>", parse_mode=ParseMode.HTML)
         message.edit_text(text="<b>Executing Code -</b>", parse_mode=ParseMode.HTML)
