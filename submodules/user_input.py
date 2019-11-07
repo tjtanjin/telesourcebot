@@ -166,28 +166,6 @@ def view_logs(update, context):
         print("view_logs")
         print(ex)
 
-@run_async
-def retrieve_specified_log(bot, update):
-    """
-    Function that retrieves specific log for user.
-    Args:
-        bot: from telegram bot
-        update: from telegram update
-    """
-    try:
-        bot.answer_callback_query(update.callback_query.id)
-        data = update.callback_query.data
-        match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
-        filename, userid = match_file.group(1)
-        user = load_user_data(userid)
-        with open(filename, "r") as file:
-            content = file.read()
-        bot.send_message(chat_id=user["userid"], text=content)
-        return None
-    except Exception as ex:
-        print("retrieve_specified_log")
-        print(ex)
-
 #------------------- Miscellaneous functions -------------------#
 
 @run_async
@@ -224,6 +202,27 @@ def track_code(text, user):
     return None
 
 @run_async
+def retrieve_specified_log(bot, update):
+    """
+    Function that retrieves specific log for user.
+    Args:
+        bot: from telegram bot
+        update: from telegram update
+    """
+    try:
+        bot.answer_callback_query(update.callback_query.id)
+        data = update.callback_query.data
+        match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
+        filename, userid = match_file.group(1)
+        user = load_user_data(userid)
+        with open(filename, "r") as file:
+            content = file.read()
+        bot.send_message(chat_id=user["userid"], text=content)
+        return None
+    except Exception as ex:
+        print("retrieve_specified_log")
+        print(ex)
+
 def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
     """
     Function to build the menu buttons to show users.
@@ -235,7 +234,6 @@ def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
         menu.append(footer_buttons)
     return menu
 
-@run_async
 def show_logs(n_cols, text, user):
     """
     Function that takes in button text and callback data to generate the view.
