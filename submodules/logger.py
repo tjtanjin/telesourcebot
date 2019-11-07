@@ -20,10 +20,9 @@ def logbook(user, task):
 		user: user who carried out the action
 		task: task carried out by the user, currently only tracks registrations and code runs
 	"""
-	print(task)
 	if task == "register":
 		action = "[" + str(datetime.now()) + "] " + user["username"] + " has registered an account."
-	if task == "run_code":
+	elif task == "run_code":
 		action = "[" + str(datetime.now()) + "] " + user["username"] + " has executed /run with the following code: {" + user["code_snippet"] + "}"
 	else:
 		action = "[" + str(datetime.now()) + "] Action not recorded."
