@@ -62,6 +62,7 @@ def toggle_code(update, context):
         um.save_user_data(user)
     return None
 
+@run_async
 def run_code(update, context):
     """
     Run the code snippet of the user.
