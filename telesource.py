@@ -6,7 +6,7 @@ def main():
     print("Running...")
     with open("./token/token.json", "r") as file:
         token = json.load(file)["token"]
-    updater = Updater(token, use_context=True)
+    updater = Updater(token, use_context=True, workers=4)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("register", ui.create_user))
     dp.add_handler(CommandHandler("help", ui.guide))
