@@ -179,10 +179,10 @@ def retrieve_specified_log(update, context):
         data = update.callback_query.data
         match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
         filename, userid = match_file.group(1), match_file.group(2)
-        user = load_user_data(userid)
-        with open(filename, "r") as file:
+        user = um.load_user_data(userid)
+        with open("./logs/" + filename, "r") as file:
             content = file.read()
-        bot.send_message(chat_id=user["userid"], text=content)
+        context.bot.send_message(chat_id=user["userid"], text=content)
         return None
     except Exception as ex:
         print("retrieve_specified_log")
