@@ -1,7 +1,5 @@
-from telegram.ext.dispatcher import run_async
 import json, os
 
-@run_async
 def check_exist_user(userid):
     """
     Function to check if user exist.
@@ -14,7 +12,6 @@ def check_exist_user(userid):
     directory, filename = os.path.split("./userinfo/" + str(userid) + ".json")
     return filename in os.listdir(directory)
 
-@run_async
 def load_user_data(userid):
     """
     Function to load user data.
@@ -25,7 +22,6 @@ def load_user_data(userid):
         user = json.load(file)
     return user
 
-@run_async
 def save_user_data(user):
     """
     Function to save user data.
