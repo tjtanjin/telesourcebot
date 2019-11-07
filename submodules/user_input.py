@@ -175,7 +175,7 @@ def retrieve_specified_log(update, context):
         update: from telegram update
     """
     try:
-        update.answerCallbackQuery()
+        update.CallbackQuery.answer()
         data = update.callback_query.data
         match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
         filename, userid = match_file.group(1)
