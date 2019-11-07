@@ -21,11 +21,11 @@ def logbook(user, task):
 		task: task carried out by the user, currently only tracks registrations and code runs
 	"""
 	if task == "register":
-		action = "[" + str(datetime.now()) + "] " + user["username"] + " has registered an account."
+		action = "[" + str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + "] " + user["username"] + " has registered an account."
 	elif task == "run_code":
-		action = "[" + str(datetime.now()) + "] " + user["username"] + " has executed /run with the following code: {" + user["code_snippet"] + "}"
+		action = "[" + str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + "] " + user["username"] + " has executed /run with the following code: {" + user["code_snippet"] + "}"
 	else:
-		action = "[" + str(datetime.now()) + "] Action not recorded."
+		action = "[" + str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")) + "] Action not recorded."
 	current_date = str(date.today())
 	if check_exist_log(current_date):
 		with open("./logs/" + current_date + ".txt", "a+") as file:
