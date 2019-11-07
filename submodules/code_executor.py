@@ -21,7 +21,7 @@ class Launch():
         driver = self.driver
         driver.get("https://sourceacademy.nus.edu.sg/playground")
         aceInputTextArea = driver.find_element_by_css_selector("textarea.ace_text-input")
-        time.sleep(1)
+        time.sleep(0.5)
         aceInputTextArea.clear()
         aceInputTextArea.send_keys(self.code_snippet)
         driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='play'])[1]/following::span[1]").click()

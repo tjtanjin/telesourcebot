@@ -1,4 +1,5 @@
 from telegram import ParseMode
+from telegram.ext.dispatcher import run_async
 from submodules import code_executor as ce
 from submodules import user_management as um
 import json, threading, jsbeautifier
@@ -7,6 +8,7 @@ execute_code = False
 
 #------------------- User input functions -------------------#
 
+@run_async
 def guide(update, context):
     """
     Function to list help commands.
@@ -24,6 +26,7 @@ def guide(update, context):
 Have ideas and suggestions for this mini project? Head over to the <a href="https://github.com/tjtanjin/telesourcebot">Project Repository</a>!""", parse_mode=ParseMode.HTML, disable_web_page_preview=True)
     return None
 
+@run_async
 def create_user(update, context):
     """
     Function to create a user.
@@ -41,6 +44,7 @@ def create_user(update, context):
         update.message.reply_text("Registration successfully completed. <b>/code</b> to start coding!", parse_mode=ParseMode.HTML)
     return None
 
+@run_async
 def toggle_code(update, context):
     """
     Function to toggle coding mode for user.
@@ -61,6 +65,7 @@ def toggle_code(update, context):
         um.save_user_data(user)
     return None
 
+@run_async
 def run_code(update, context):
     """
     Run the code snippet of the user.
@@ -82,6 +87,7 @@ def run_code(update, context):
         update.message.reply_text(output)
     return None
 
+@run_async
 def clear_code(update, context):
     """
     Clear the code snippet of the user.
@@ -98,6 +104,7 @@ def clear_code(update, context):
         update.message.reply_text("<b>Code Cleared</b>", parse_mode=ParseMode.HTML)
     return None
 
+@run_async
 def view_code(update, context):
     """
     View the current code of the user.
@@ -115,6 +122,7 @@ def view_code(update, context):
         update.message.reply_text(code, parse_mode=ParseMode.HTML)
     return None
 
+@run_async
 def check_mode(update, context): 
     """
     Function to check mode of user.
@@ -135,6 +143,7 @@ def check_mode(update, context):
 
 #------------------- Miscellaneous functions -------------------#
 
+@run_async
 def load_animation(update, message):
     """
     Function that provides loading animation during code execution.
@@ -150,6 +159,7 @@ def load_animation(update, message):
     message.edit_text(text="<b>Execution Complete:</b>", parse_mode=ParseMode.HTML)
     return None
 
+@run_async
 def track_code(text, user):
     """
     Track code input of user in coding mode.
