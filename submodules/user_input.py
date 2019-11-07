@@ -38,11 +38,11 @@ def create_user(update, context):
     if um.check_exist_user(update.message.chat_id):
         update.message.reply_text("You are already registered!")
     else:
+        lg.logbook(new_info, "register")
         new_info = {"username":update.message.from_user.username, "userid":str(update.message.chat_id), "mode":"1", "user_group":"normal", "code_snippet":""}
         with open("./userinfo/" + str(update.message.chat_id) + ".json", 'w+') as info_file:
             json.dump(new_info, info_file)
         update.message.reply_text("Registration successfully completed. <b>/code</b> to start coding!", parse_mode=ParseMode.HTML)
-        lg.logbook(new_info, "register")
     return None
 
 @run_async
