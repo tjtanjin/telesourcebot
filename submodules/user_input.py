@@ -1,4 +1,4 @@
-from telegram import ParseMode
+from telegram import ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext.dispatcher import run_async
 from submodules import code_executor as ce
 from submodules import user_management as um
