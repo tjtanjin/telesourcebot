@@ -178,7 +178,7 @@ def retrieve_specified_log(update, context):
         context.bot.answer_callback_query(update.callback_query.id)
         data = update.callback_query.data
         match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
-        filename, userid = match_file.group(1)
+        filename, userid = match_file.group(1), match_file.group(2)
         user = load_user_data(userid)
         with open(filename, "r") as file:
             content = file.read()
@@ -245,7 +245,7 @@ def show_logs(n_cols, text, user):
     try:
         button_list = []
         for i in range(0,n_cols):
-            button_list.append(InlineKeyboardButton(i+1, callback_data="get_logs_" + text[i] + "_" + user["userid"]))
+            button_list.append(InlineKeyboardButton(text[i], callback_data="get_logs_" + text[i] + "_" + user["userid"]))
         reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=n_cols))
         return reply_markup
     except Exception as ex:
