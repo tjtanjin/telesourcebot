@@ -7,6 +7,8 @@ def check_user_permission(userid, perms):
         userid: user to be checked for perms
         perms: perms to check against
     """
+    with open("./config/permissions.json", "r") as file:
+        permission = json.load(file)
     return userid["user_group"] == permission[perms]
 
 def check_exist_user(userid):
