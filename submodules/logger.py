@@ -1,15 +1,15 @@
 from datetime import datetime, date
 
-def check_exist_log(date):
+def check_exist_log(current_date):
     """
     Function to check if user exist.
     Args:
         path: path to the supposed user's folder
     """
     #checks if user exist by looking for file with user's username
-    if not os.path.isfile("./logs/" + date + ".txt"): 
+    if not os.path.isfile("./logs/" + current_date + ".txt"): 
         return False
-    directory, filename = os.path.split("./logs/" + date + ".txt")
+    directory, filename = os.path.split("./logs/" + current_date + ".txt")
     return filename in os.listdir(directory)
 
 def logbook(user, task):
@@ -25,11 +25,11 @@ def logbook(user, task):
 		action = "[" + str(datetime.now()) + "] " + user["username"] + " has executed /run with the following code: {" + user["code_snippet"] + "}"
 	else:
 		action = "Action not recorded."
-	date = str(date.today())
-	if check_exist_log(date):
-		with open("./logs/" + date + ".txt", "a+") as file:
+	current_date = str(date.today())
+	if check_exist_log(current_date):
+		with open("./logs/" + current_date + ".txt", "a+") as file:
 			file.write(action + "\n")
 	else:
-		with open("./logs/" + date + ".txt", "w+") as file:
+		with open("./logs/" + current_date + ".txt", "w+") as file:
 			file.write(action + "\n")
 	return None
