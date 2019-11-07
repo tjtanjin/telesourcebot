@@ -2,6 +2,7 @@ from telegram import ParseMode
 from telegram.ext.dispatcher import run_async
 from submodules import code_executor as ce
 from submodules import user_management as um
+from submodules import logging as lg
 import json, threading, jsbeautifier
 global executing_code
 execute_code = False
@@ -41,6 +42,7 @@ def create_user(update, context):
         with open("./userinfo/" + str(update.message.chat_id) + ".json", 'w+') as info_file:
             json.dump(new_info, info_file)
         update.message.reply_text("Registration successfully completed. <b>/code</b> to start coding!", parse_mode=ParseMode.HTML)
+        lg.logbook(new_info, "register")
     return None
 
 @run_async
@@ -75,18 +77,15 @@ def run_code(update, context):
     if not um.check_exist_user(update.message.chat_id):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
-        try:
-            global executing_code
-            executing_code = True
-            executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
-            threading.Thread(target=load_animation, args=(update, executing)).start()
-            user = um.load_user_data(update.message.chat_id)
-            prep = ce.Launch(user["code_snippet"].replace("\n", ""))
-            output = prep.action()
-            executing_code = False
-            update.message.reply_text(output)
-        except Exception as ex:
-            print(ex)
+        global executing_code
+        executing_code = True
+        executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
+        user = um.load_user_data(update.message.chat_id)
+        threading.Thread(target=load_animation, args=(user, update, executing)).start()
+        prep = ce.Launch(user["code_snippet"].replace("\n", ""))
+        output = prep.action()
+        executing_code = False
+        update.message.reply_text(output)
     return None
 
 @run_async
@@ -146,13 +145,15 @@ def check_mode(update, context):
 #------------------- Miscellaneous functions -------------------#
 
 @run_async
-def load_animation(update, message):
+def load_animation(user, update, message):
     """
     Function that provides loading animation during code execution.
     Args:
+        user: user running the code
         update: default telegram arg
         context: default telegram arg
     """
+    lg.logbook(user, "run_code")
     while executing_code:
         message.edit_text(text="<b>Executing Code /</b>", parse_mode=ParseMode.HTML)
         message.edit_text(text="<b>Executing Code -</b>", parse_mode=ParseMode.HTML)
