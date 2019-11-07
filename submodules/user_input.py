@@ -142,6 +142,44 @@ def check_mode(update, context):
             update.message.reply_text("Invalid input. Use /code to toggle code mode.")
     return None
 
+@run_async
+def view_logs(update, context):
+    """
+    View the logs of the bot (admin only)
+    Args:
+        update: default telegram arg
+        context: default telegram arg
+    """
+    if not um.check_exist_user(update.message.chat_id):
+        update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
+    else:
+        user = um.load_user_data(update.message.chat_id)
+    if not um.check_user_permission(user, "0"):
+        update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
+    else:
+        list_of_logs = os.listdir()
+        retrieved_logs = show_logs(len(list_of_logs), list_of_logs, user)
+        update.message.reply_text(reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
+    return None
+
+@run_async
+def retrieve_specified_log(bot, update):
+    """
+    Function that retrieves specific log for user.
+    Args:
+        bot: from telegram bot
+        update: from telegram update
+    """
+    bot.answer_callback_query(update.callback_query.id)
+    data = update.callback_query.data
+    match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
+    filename, userid = match_file.group(1)
+    user = load_user_data(userid)
+    with open(filename, "r") as file:
+        content = file.read()
+    bot.send_message(chat_id=user["userid"], text=content)
+    return None
+
 #------------------- Miscellaneous functions -------------------#
 
 @run_async
@@ -176,3 +214,21 @@ def track_code(text, user):
     user["code_snippet"] = user["code_snippet"] + text
     um.save_user_data(user)
     return None
+
+@run_async
+def show_logs(n_cols, text, user):
+    """
+    Function that takes in button text and callback data to generate the view.
+    Args:
+        n_cols: cols for button
+        text: list of texts to show
+        user: user to show logs to
+    """
+    try:
+        button_list = []
+        for i in range(0,n_cols):
+            button_list.append(InlineKeyboardButton(text[i], callback_data="get_logs_" + text[i] + "_" + user["userid"]))
+        reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=n_cols))
+        return reply_markup
+    except Exception as ex:
+        print(ex)

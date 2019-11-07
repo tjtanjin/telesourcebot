@@ -4,7 +4,7 @@ import json
 
 def main():
     print("Running...")
-    with open("./token/token.json", "r") as file:
+    with open("./config/token.json", "r") as file:
         token = json.load(file)["token"]
     updater = Updater(token, use_context=True, workers=4)
     dp = updater.dispatcher
@@ -14,6 +14,8 @@ def main():
     dp.add_handler(CommandHandler("run", ui.run_code))
     dp.add_handler(CommandHandler("clear", ui.clear_code))
     dp.add_handler(CommandHandler("view", ui.view_code))
+    dp.add_handler(CommandHandler("logs", ui.view_logs))
+    dp.add_handler(CallbackQueryHandler(ui.retrieve_specified_log, pattern='get_logs_(\S+)_(\S+)'))
     dp.add_handler(MessageHandler(Filters.text, ui.check_mode))
     updater.start_polling()
     updater.idle()
