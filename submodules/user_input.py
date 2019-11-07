@@ -158,7 +158,7 @@ def view_logs(update, context):
         if not um.check_user_permission(user, "0"):
             update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
         else:
-            list_of_logs = os.listdir()
+            list_of_logs = os.listdir("./logs")
             retrieved_logs = show_logs(len(list_of_logs), list_of_logs, user)
             update.message.reply_text("<b>Please select a log:</b>", reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
         return None
@@ -175,7 +175,7 @@ def retrieve_specified_log(update, context):
         update: from telegram update
     """
     try:
-        update.answer()
+        update.answerCallbackQuery()
         data = update.callback_query.data
         match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
         filename, userid = match_file.group(1)
