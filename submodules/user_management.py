@@ -1,6 +1,6 @@
 import json, os
 
-def check_user_permission(userid, perms):
+def check_user_permission(user, perms):
     """
     Function to check user permissions.
     Args
@@ -9,7 +9,7 @@ def check_user_permission(userid, perms):
     """
     with open("./config/permissions.json", "r") as file:
         permission = json.load(file)
-    return userid["user_group"] == permission[perms]
+    return user["user_group"] == permission[perms]
 
 def check_exist_user(userid):
     """
