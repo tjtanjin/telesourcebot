@@ -224,6 +224,18 @@ def track_code(text, user):
     return None
 
 @run_async
+def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
+    """
+    Function to build the menu buttons to show users.
+    """
+    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
+    if header_buttons:
+        menu.insert(0, header_buttons)
+    if footer_buttons:
+        menu.append(footer_buttons)
+    return menu
+
+@run_async
 def show_logs(n_cols, text, user):
     """
     Function that takes in button text and callback data to generate the view.
