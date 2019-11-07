@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import os
 
 def check_exist_log(current_date):
     """
