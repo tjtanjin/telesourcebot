@@ -160,7 +160,7 @@ def view_logs(update, context):
         else:
             list_of_logs = os.listdir()
             retrieved_logs = show_logs(len(list_of_logs), list_of_logs, user)
-            update.message.reply_text(reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
+            update.message.reply_text("<b>Please select a log:</b>", reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
         return None
     except Exception as ex:
         print("view_logs")
