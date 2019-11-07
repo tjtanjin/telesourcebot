@@ -150,17 +150,21 @@ def view_logs(update, context):
         update: default telegram arg
         context: default telegram arg
     """
-    if not um.check_exist_user(update.message.chat_id):
-        update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
-    else:
-        user = um.load_user_data(update.message.chat_id)
-    if not um.check_user_permission(user, "0"):
-        update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
-    else:
-        list_of_logs = os.listdir()
-        retrieved_logs = show_logs(len(list_of_logs), list_of_logs, user)
-        update.message.reply_text(reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
-    return None
+    try:
+        if not um.check_exist_user(update.message.chat_id):
+            update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
+        else:
+            user = um.load_user_data(update.message.chat_id)
+        if not um.check_user_permission(user, "0"):
+            update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
+        else:
+            list_of_logs = os.listdir()
+            retrieved_logs = show_logs(len(list_of_logs), list_of_logs, user)
+            update.message.reply_text(reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
+        return None
+    except Exception as ex:
+        print("view_logs")
+        print(ex)
 
 @run_async
 def retrieve_specified_log(bot, update):
@@ -170,15 +174,19 @@ def retrieve_specified_log(bot, update):
         bot: from telegram bot
         update: from telegram update
     """
-    bot.answer_callback_query(update.callback_query.id)
-    data = update.callback_query.data
-    match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
-    filename, userid = match_file.group(1)
-    user = load_user_data(userid)
-    with open(filename, "r") as file:
-        content = file.read()
-    bot.send_message(chat_id=user["userid"], text=content)
-    return None
+    try:
+        bot.answer_callback_query(update.callback_query.id)
+        data = update.callback_query.data
+        match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
+        filename, userid = match_file.group(1)
+        user = load_user_data(userid)
+        with open(filename, "r") as file:
+            content = file.read()
+        bot.send_message(chat_id=user["userid"], text=content)
+        return None
+    except Exception as ex:
+        print("retrieve_specified_log")
+        print(ex)
 
 #------------------- Miscellaneous functions -------------------#
 
@@ -231,4 +239,5 @@ def show_logs(n_cols, text, user):
         reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=n_cols))
         return reply_markup
     except Exception as ex:
+        print("show_logs")
         print(ex)
