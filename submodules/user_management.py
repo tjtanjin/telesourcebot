@@ -1,5 +1,14 @@
 import json, os
 
+def check_user_permission(userid, perms):
+    """
+    Function to check user permissions.
+    Args
+        userid: user to be checked for perms
+        perms: perms to check against
+    """
+    return userid["user_group"] == permission[perms]
+
 def check_exist_user(userid):
     """
     Function to check if user exist.
