@@ -3,7 +3,7 @@ from telegram.ext.dispatcher import run_async
 from submodules import code_executor as ce
 from submodules import user_management as um
 from submodules import logger as lg
-import json, threading, jsbeautifier, os
+import json, threading, jsbeautifier, os, re
 global executing_code
 execute_code = False
 
