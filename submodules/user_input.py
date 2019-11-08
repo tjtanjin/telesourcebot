@@ -212,11 +212,11 @@ def track_code(text, user):
     um.save_user_data(user)
     return None
 
-def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
+def build_menu(buttons, header_buttons=None, footer_buttons=None):
     """
     Function to build the menu buttons to show users.
     """
-    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
+    menu = [buttons[i] for i in range(0, len(buttons))]
     if header_buttons:
         menu.insert(0, header_buttons)
     if footer_buttons:
@@ -232,7 +232,7 @@ def show_logs(n_rows, text, user):
         user: user to show logs to
     """
     button_list = []
-    for i in range(0,n_cols):
-        button_list.append(InlineKeyboardButton(text[i], callback_data="get_logs_" + text[i] + "_" + user["userid"]))
-    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_rows=n_rows))
+    for i in range(0,n_rows):
+        button_list.append([InlineKeyboardButton(text[i], callback_data="get_logs_" + text[i] + "_" + user["userid"])])
+    reply_markup = InlineKeyboardMarkup(build_menu(button_list))
     return reply_markup
