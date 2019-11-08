@@ -4,8 +4,6 @@ from submodules import code_executor as ce
 from submodules import user_management as um
 from submodules import logger as lg
 import json, threading, jsbeautifier, os, re
-global executing_code
-execute_code = False
 
 #------------------- User input functions -------------------#
 @run_async
@@ -74,10 +72,27 @@ def run_code(update, context):
         update: default telegram arg
         context: default telegram arg
     """
+    executing_code = False
+    def load_animation(user, update, message):
+        """
+        Function that provides loading animation during code execution.
+        Args:
+            user: user running the code
+            update: default telegram arg
+            context: default telegram arg
+        """
+        lg.logbook(user, "run_code")
+        while executing_code:
+            message.edit_text(text="<b>Executing Code /</b>", parse_mode=ParseMode.HTML)
+            message.edit_text(text="<b>Executing Code -</b>", parse_mode=ParseMode.HTML)
+            message.edit_text(text="<b>Executing Code \\</b>", parse_mode=ParseMode.HTML)
+            message.edit_text(text="<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
+        message.edit_text(text="<b>Execution Complete:</b>", parse_mode=ParseMode.HTML)
+        return None
+
     if not um.check_exist_user(update.message.chat_id):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
-        global executing_code
         executing_code = True
         executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
         user = um.load_user_data(update.message.chat_id)
@@ -181,24 +196,6 @@ def retrieve_specified_log(update, context):
     return None
 
 #------------------- Miscellaneous functions -------------------#
-
-@run_async
-def load_animation(user, update, message):
-    """
-    Function that provides loading animation during code execution.
-    Args:
-        user: user running the code
-        update: default telegram arg
-        context: default telegram arg
-    """
-    lg.logbook(user, "run_code")
-    while executing_code:
-        message.edit_text(text="<b>Executing Code /</b>", parse_mode=ParseMode.HTML)
-        message.edit_text(text="<b>Executing Code -</b>", parse_mode=ParseMode.HTML)
-        message.edit_text(text="<b>Executing Code \\</b>", parse_mode=ParseMode.HTML)
-        message.edit_text(text="<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
-    message.edit_text(text="<b>Execution Complete:</b>", parse_mode=ParseMode.HTML)
-    return None
 
 @run_async
 def track_code(text, user):
