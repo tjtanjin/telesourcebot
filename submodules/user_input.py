@@ -55,6 +55,8 @@ def toggle_code(update, context):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
         user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
         if user["mode"] == "0":
             user["mode"] = "1"
             update.message.reply_text("<b>Code Mode Disabled</b>", parse_mode=ParseMode.HTML)
@@ -96,6 +98,8 @@ def run_code(update, context):
         executing_code = True
         executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
         user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
         threading.Thread(target=load_animation, args=(user, update, executing)).start()
         with open("./config/endpoint.json", "r") as file:
             endpoint = json.load(file)["endpoint"]
@@ -117,6 +121,8 @@ def clear_code(update, context):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
         user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
         user["code_snippet"] = ""
         um.save_user_data(user)
         update.message.reply_text("<b>Code Cleared</b>", parse_mode=ParseMode.HTML)
@@ -134,12 +140,18 @@ def view_code(update, context):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
         user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
         code = jsbeautifier.beautify(user["code_snippet"])
         if code == "":
             code = "<b>No Existing Code Found.</b>"
             update.message.reply_text(code, parse_mode=ParseMode.HTML)
         else:
-            update.message.reply_text(code)
+            if len(code) > 4096: 
+                for i in range(0, len(code), 4096):
+                    update.message.reply_text(code[i:i+4096]) 
+            else:
+                update.message.reply_text(code) 
     return None
 
 @run_async
@@ -154,6 +166,8 @@ def check_mode(update, context):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
         user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
         mode = user["mode"]
         if mode == "0":
             track_code(update.message.text, user)
@@ -173,6 +187,8 @@ def view_logs(update, context):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
         user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
     if not um.check_user_permission(user, "0"):
         update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
     else:
@@ -194,9 +210,15 @@ def retrieve_specified_log(update, context):
     match_file = re.match(r'get_logs_(\S+)_(\S+)', data)
     filename, userid = match_file.group(1), match_file.group(2)
     user = um.load_user_data(userid)
+    if not user:
+            return error(update)
     with open("./logs/" + filename, "r") as file:
         content = file.read()
-    context.bot.send_message(chat_id=user["userid"], text=content)
+    if len(content) > 4096: 
+        for i in range(0, len(content), 4096): 
+            context.bot.send_message(chat_id=user["userid"], text=content[i:i+4096]) 
+    else: 
+        context.bot.send_message(chat_id=user["userid"], text=content)
     return None
 
 #------------------- Miscellaneous functions -------------------#
@@ -237,3 +259,11 @@ def show_logs(n_rows, text, user):
         button_list.append([InlineKeyboardButton(text[i], callback_data="get_logs_" + text[i] + "_" + user["userid"])])
     reply_markup = InlineKeyboardMarkup(build_menu(button_list))
     return reply_markup
+
+def error(update):
+    """
+    Function that handles unexpected errors.
+    Args:
+        update: from telegram update
+    """
+    update.message.reply_text("<b>An error has occurred. Please contact @FRUZNFEVER to resolve the issue.</b>", parse_mode=ParseMode.HTML)

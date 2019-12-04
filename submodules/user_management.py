@@ -29,9 +29,13 @@ def load_user_data(userid):
     Args:
         userid: user to be loaded
     """
-    with open("./userinfo/" + str(userid) + ".json", 'r') as file:
-        user = json.load(file)
-    return user
+    try:
+        with open("./userinfo/" + str(userid) + ".json", 'r') as file:
+            user = json.load(file)
+        return user
+    except:
+        return False
+
 
 def save_user_data(user):
     """
