@@ -97,8 +97,10 @@ def run_code(update, context):
         executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
         user = um.load_user_data(update.message.chat_id)
         threading.Thread(target=load_animation, args=(user, update, executing)).start()
-        res = requests.post(endpoint, data = {"code": user["userid"]})
-        output = res.content.decode('utf-8')[3:-1]
+        with open("./config/endpoint.json", "r") as file:
+            endpoint = json.load(file)["endpoint"]
+        res = requests.post(endpoint, data = {"userid": user["userid"]})
+        output = res.content.decode('utf-8')[1:-1]
         executing_code = False
         update.message.reply_text(output)
     return None
@@ -135,7 +137,9 @@ def view_code(update, context):
         code = jsbeautifier.beautify(user["code_snippet"])
         if code == "":
             code = "<b>No Existing Code Found.</b>"
-        update.message.reply_text(code, parse_mode=ParseMode.HTML)
+            update.message.reply_text(code, parse_mode=ParseMode.HTML)
+        else:
+            update.message.reply_text(code)
     return None
 
 @run_async
@@ -205,7 +209,7 @@ def track_code(text, user):
         text: code to add
         user: user who is coding
     """
-    user["code_snippet"] = user["code_snippet"] + text
+    user["code_snippet"] = user["code_snippet"] + text.replace("\n", "")
     um.save_user_data(user)
     return None
 
