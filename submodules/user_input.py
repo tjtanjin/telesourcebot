@@ -3,7 +3,7 @@ from telegram.ext.dispatcher import run_async
 from submodules import code_executor as ce
 from submodules import user_management as um
 from submodules import logger as lg
-import json, threading, jsbeautifier, os, re
+import json, threading, jsbeautifier, os, re, requests
 
 #------------------- User input functions -------------------#
 @run_async
@@ -97,8 +97,8 @@ def run_code(update, context):
         executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
         user = um.load_user_data(update.message.chat_id)
         threading.Thread(target=load_animation, args=(user, update, executing)).start()
-        prep = ce.Launch(user["code_snippet"].replace("\n", ""))
-        output = prep.action()
+        res = requests.post(endpoint, data = {"code": user["userid"]})
+        output = res.content.decode('utf-8')[3:-1]
         executing_code = False
         update.message.reply_text(output)
     return None
