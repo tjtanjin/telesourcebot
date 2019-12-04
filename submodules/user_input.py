@@ -214,7 +214,7 @@ def broadcast(update, context):
     if not um.check_user_permission(user, "0"):
         update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
     else:
-        for filename in os.listdir():
+        for filename in os.listdir("./userinfo/"):
             context.bot.send_message(filename[:-5], text=context.args[0])
 
 @run_async
