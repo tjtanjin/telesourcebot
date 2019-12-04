@@ -135,7 +135,7 @@ def view_code(update, context):
     Args:
         update: default telegram arg
         context: default telegram arg
-    """
+    """ 
     if not um.check_exist_user(update.message.chat_id):
         update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
     else:
@@ -178,7 +178,7 @@ def check_mode(update, context):
 @run_async
 def view_logs(update, context):
     """
-    View the logs of the bot (admin only)
+    View the logs of the bot (admin only).
     Args:
         update: default telegram arg
         context: default telegram arg
@@ -196,6 +196,26 @@ def view_logs(update, context):
         retrieved_logs = show_logs(len(list_of_logs), list_of_logs, user)
         update.message.reply_text("<b>Please select a log:</b>", reply_markup=retrieved_logs, parse_mode=ParseMode.HTML)
     return None
+
+@run_async
+def broadcast(update, context):
+    """
+    Broadcast updates to users (admin only).
+    Args:
+        update: default telegram arg
+        context: default telegram arg
+    """
+    if not um.check_exist_user(update.message.chat_id):
+        update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
+    else:
+        user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
+    if not um.check_user_permission(user, "0"):
+        update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
+    else:
+        for filename in os.listdir():
+            context.bot.send_message(filename[:-5], text=context.args[0])
 
 @run_async
 def retrieve_specified_log(update, context):
