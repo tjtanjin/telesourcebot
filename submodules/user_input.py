@@ -215,7 +215,8 @@ def broadcast(update, context):
         update.message.reply_text("<b>Insufficient Permission.</b>", parse_mode=ParseMode.HTML)
     else:
         for filename in os.listdir("./userinfo/"):
-            context.bot.send_message(filename[:-5], text="Broadcast: " + context.arg[0])
+            if filename.endswith(".json"):
+                context.bot.send_message(filename[:-5], text="Broadcast: " + ' '.join(context.args))
 
 @run_async
 def retrieve_specified_log(update, context):
