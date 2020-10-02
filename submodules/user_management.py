@@ -46,3 +46,9 @@ def save_user_data(user):
     with open("./userinfo/" + str(user["userid"]) + ".json", 'w+') as file:
         json.dump(user, file)
     return None
+
+def verify_username(user, current_name):
+    if user["username"] != current_name:
+        user["username"] = current_name
+        save_user_data(user)
+    return None

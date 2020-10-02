@@ -98,6 +98,7 @@ def run_code(update, context):
         executing_code = True
         executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
         user = um.load_user_data(update.message.chat_id)
+        um.verify_username(user, update.message.from_user.username)
         if not user:
             return error(update)
         threading.Thread(target=load_animation, args=(user, update, executing)).start()
