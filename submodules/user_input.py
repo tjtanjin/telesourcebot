@@ -17,7 +17,7 @@ def guide(update, context):
     update.message.reply_text("""Here are the currently available commands:\n
         <b>/register</b> - registers your account\n
         <b>/code</b> - toggles coding mode\n
-        <b>/version (number)</b> - toggles source version <b>(1-4)</b>\n
+        <b>/version &lt;number&gt;</b> - toggles source version <b>(1-4)</b>\n
         <b>/run</b> - runs your code\n
         <b>/clear</b> - clears your code\n
         <b>/view</b> - shows your current code\n
@@ -81,9 +81,12 @@ def toggle_version(update, context):
         user = um.load_user_data(update.message.chat_id)
         if not user:
             return error(update)
-        user["version"] = context.args[0]
-        update.message.reply_text("<b>Current Source Version: " + context.args[0] + "</b>", parse_mode=ParseMode.HTML)
-        um.save_user_data(user)
+        if context.args == []:
+            update.message.reply_text("Usage: <b>/version &lt;number&gt; (1-4)</b>", parse_mode=ParseMode.HTML)
+        else:
+            user["version"] = context.args[0]
+            update.message.reply_text("<b>Current Source Version: " + context.args[0] + "</b>", parse_mode=ParseMode.HTML)
+            um.save_user_data(user)
     return None
 
 @run_async
@@ -237,7 +240,7 @@ def broadcast(update, context):
     else:
         for filename in os.listdir("./userinfo/"):
             if filename.endswith(".json"):
-                context.bot.send_message(filename[:-5], text="Broadcast: " + ' '.join(context.args))
+                context.bot.send_message(filename[:-5], text="<b>Announcement</b>: " + ' '.join(context.args), parse_mode=ParseMode.HTML)
 
 @run_async
 def retrieve_specified_log(update, context):
