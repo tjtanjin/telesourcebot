@@ -130,7 +130,7 @@ def run_code(update, context):
         res = requests.post(endpoint, data = {"userid": user["userid"], "version": user["version"]})
         output = res.content.decode('utf-8')[1:-1]
         executing_code = False
-        update.message.reply_text(output)
+        update.message.reply_text("`" + output + "`", parse_mode=ParseMode.MARKDOWN_V2)
     return None
 
 @run_async
@@ -276,7 +276,7 @@ def track_code(text, user):
         text: code to add
         user: user who is coding
     """
-    user["code_snippet"] = user["code_snippet"] + text.replace("\n", "")
+    user["code_snippet"] = user["code_snippet"] + text.replace("\n", "").replace('“', '"').replace('”', '"').replace("‘", "'").replace("’", "'")
     um.save_user_data(user)
     return None
 
