@@ -1,3 +1,4 @@
-/config
+/config/token.json
+/config/endpoint.json
 /userinfo
 /logs
