@@ -17,6 +17,7 @@ def guide(update, context):
     update.message.reply_text("""Here are the currently available commands:\n
         <b>/register</b> - registers your account\n
         <b>/code</b> - toggles coding mode\n
+        <b>/version &lt;number&gt;</b> - toggles source version <b>(1-4)</b>\n
         <b>/run</b> - runs your code\n
         <b>/clear</b> - clears your code\n
         <b>/view</b> - shows your current code\n
@@ -36,7 +37,7 @@ def create_user(update, context):
     if um.check_exist_user(update.message.chat_id):
         update.message.reply_text("You are already registered!")
     else:
-        new_info = {"username":update.message.from_user.username, "userid":str(update.message.chat_id), "mode":"1", "user_group":"normal", "code_snippet":""}
+        new_info = {"username":update.message.from_user.username, "userid":str(update.message.chat_id), "mode":"1", "user_group":"normal", "version":"4", "code_snippet":""}
         lg.logbook(new_info, "register")
         with open("./userinfo/" + str(update.message.chat_id) + ".json", 'w+') as info_file:
             json.dump(new_info, info_file)
@@ -64,6 +65,28 @@ def toggle_code(update, context):
             user["mode"] = "0"
             update.message.reply_text("<b>Code Mode Enabled</b>", parse_mode=ParseMode.HTML)
         um.save_user_data(user)
+    return None
+
+@run_async
+def toggle_version(update, context):
+    """
+    Function to toggle source version for user.
+    Args:
+        update: default telegram arg
+        context: default telegram arg
+    """
+    if not um.check_exist_user(update.message.chat_id):
+        update.message.reply_text("You are not registered. Try <b>/register</b>", parse_mode=ParseMode.HTML)
+    else:
+        user = um.load_user_data(update.message.chat_id)
+        if not user:
+            return error(update)
+        if context.args == []:
+            update.message.reply_text("Usage: <b>/version &lt;number&gt; (1-4)</b>", parse_mode=ParseMode.HTML)
+        else:
+            user["version"] = context.args[0]
+            update.message.reply_text("<b>Current Source Version: " + context.args[0] + "</b>", parse_mode=ParseMode.HTML)
+            um.save_user_data(user)
     return None
 
 @run_async
@@ -98,15 +121,16 @@ def run_code(update, context):
         executing_code = True
         executing = update.message.reply_text("<b>Executing Code |</b>", parse_mode=ParseMode.HTML)
         user = um.load_user_data(update.message.chat_id)
+        um.verify_username(user, update.message.from_user.username)
         if not user:
             return error(update)
         threading.Thread(target=load_animation, args=(user, update, executing)).start()
         with open("./config/endpoint.json", "r") as file:
             endpoint = json.load(file)["endpoint"]
-        res = requests.post(endpoint, data = {"userid": user["userid"]})
+        res = requests.post(endpoint, data = {"userid": user["userid"], "version": user["version"]})
         output = res.content.decode('utf-8')[1:-1]
         executing_code = False
-        update.message.reply_text(output)
+        update.message.reply_text("`" + output + "`", parse_mode=ParseMode.MARKDOWN_V2)
     return None
 
 @run_async
@@ -216,7 +240,7 @@ def broadcast(update, context):
     else:
         for filename in os.listdir("./userinfo/"):
             if filename.endswith(".json"):
-                context.bot.send_message(filename[:-5], text="Broadcast: " + ' '.join(context.args))
+                context.bot.send_message(filename[:-5], text="<b>Announcement</b>: " + ' '.join(context.args), parse_mode=ParseMode.HTML)
 
 @run_async
 def retrieve_specified_log(update, context):
@@ -252,7 +276,7 @@ def track_code(text, user):
         text: code to add
         user: user who is coding
     """
-    user["code_snippet"] = user["code_snippet"] + text.replace("\n", "")
+    user["code_snippet"] = user["code_snippet"] + text.replace("\n", "").replace('“', '"').replace('”', '"').replace("‘", "'").replace("’", "'")
     um.save_user_data(user)
     return None
 

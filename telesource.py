@@ -16,6 +16,7 @@ def main():
     dp.add_handler(CommandHandler("view", ui.view_code))
     dp.add_handler(CommandHandler("logs", ui.view_logs))
     dp.add_handler(CommandHandler("broadcast", ui.broadcast, pass_args=True))
+    dp.add_handler(CommandHandler("version", ui.toggle_version, pass_args=True))
     dp.add_handler(CallbackQueryHandler(ui.retrieve_specified_log, pattern='get_logs_(\S+)_(\S+)'))
     dp.add_handler(MessageHandler(Filters.text, ui.check_mode))
     updater.start_polling()
